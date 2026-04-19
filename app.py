@@ -6,8 +6,13 @@ app = Flask(__name__)
 # Define a route and view function
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('index.html') 
+
+@app.route('/register')
+def register():
+    return render_template('register.html')
 
 # Run the app in debug mode
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True) 
+

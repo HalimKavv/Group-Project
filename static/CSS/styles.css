@@ -18,7 +18,7 @@
 
         /* --- NAVIGATION --- */
         .navbar { 
-            color: #FFD500; /* Fixed: Changed text-color to color */
+            color: #FFD500; 
             background-color: #051094; 
             padding: 20px 40px;
             display: flex;
@@ -28,23 +28,56 @@
         }
 
         .logo {
-            color: #FFD500; /* Bright Yellow */
+            color: #FFD500; 
             font-size: 44px;
             font-weight: bold;
             text-decoration: none;
         } 
 
         .nav-links { 
-            color: #FFD500; /* Bright Yellow */
+            color:#051094; 
             list-style: none;
             display: flex;
             gap: 30px;
+        }  
+
+        .nav-links a {
+            color: #FFD500; 
+            text-decoration: none;
+            font-size: 18px;
+            transition: color 0.3s ease;
         } 
+        .nav-links a:hover {
+            color: #00A2FF; 
+        }
         .Main-Header { 
             background-color:white; /* Dark Blue */
             color:black; /* Bright Yellow */
             text-align: center;
             padding: 60px 20px;
-        }
+        } 
+      .nav-links .btn-login, 
+      .nav-links .btn-register, 
+      .btn-primary {
+            background-color: #FFD500; 
+            color: #333; 
+            padding: 10px 20px;
+            font-size: 16px; 
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            display: inline-block;  
+            text-decoration: none;  
+            text-align: center;     
+} 
 
+
+    .nav-links .btn-login:hover, 
+    .nav-links .btn-register:hover, 
+    .btn-primary:hover {
+            background-color: #e6c000; 
+            color: #333; 
+}
        
