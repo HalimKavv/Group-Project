@@ -1,0 +1,50 @@
+
+        /* Basic Resets */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+           
+            background-color: #333;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* --- NAVIGATION --- */
+        .navbar { 
+            color: #FFD500; /* Fixed: Changed text-color to color */
+            background-color: #051094; 
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid #00A2FF;
+        }
+
+        .logo {
+            color: #FFD500; /* Bright Yellow */
+            font-size: 44px;
+            font-weight: bold;
+            text-decoration: none;
+        } 
+
+        .nav-links { 
+            color: #FFD500; /* Bright Yellow */
+            list-style: none;
+            display: flex;
+            gap: 30px;
+        } 
+        .Main-Header { 
+            background-color:white; /* Dark Blue */
+            color:black; /* Bright Yellow */
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+       
