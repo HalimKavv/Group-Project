@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Owner Dashboard | LuckyNest{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <!-- Welcome Banner -->
+    <div class="dashboard-banner">
+        <div>
+            <h1>LuckyNest Owner Portal 🏢</h1>
+            <p>Welcome, {{ session['user_name'] }} — here's your property overview</p>
+        </div>
+        <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+        <div class="kpi-card highlight">
+            <span class="kpi-label">Total Revenue (MTD)</span>
+            <span class="kpi-value">£2,327</span>
+            <span class="kpi-sub trend-up">▲ 12.5% YoY</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Active Guests</span>
+            <span class="kpi-value">42</span>
+            <span class="kpi-sub trend-down">▼ 2% vs last</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Occupancy Rate</span>
+            <span class="kpi-value">84%</span>
+            <span class="kpi-sub trend-down">▼ 2% vs last</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Collection Rate</span>
+            <span class="kpi-value">92%</span>
+            <span class="kpi-sub trend-up">▲ 5% vs last</span>
+        </div>
+    </div>
+
+    <!-- Revenue Breakdown -->
+    <div class="section-title">Monthly Revenue Breakdown</div>
+    <div class="revenue-grid">
+        <div class="revenue-row">
+            <span class="rev-label">Room Rent</span>
+            <div class="rev-bar-wrap">
+                <div class="rev-bar" style="width:64%"></div>
+            </div>
+            <span class="rev-amount">£1,485 <small>64%</small></span>
+        </div>
+        <div class="revenue-row">
+            <span class="rev-label">Food Services</span>
+            <div class="rev-bar-wrap">
+                <div class="rev-bar" style="width:25%"></div>
+            </div>
+            <span class="rev-amount">£580 <small>25%</small></span>
+        </div>
+        <div class="revenue-row">
+            <span class="rev-label">Laundry</span>
+            <div class="rev-bar-wrap">
+                <div class="rev-bar" style="width:7%"></div>
+            </div>
+            <span class="rev-amount">£152 <small>7%</small></span>
+        </div>
+        <div class="revenue-row">
+            <span class="rev-label">Housekeeping</span>
+            <div class="rev-bar-wrap">
+                <div class="rev-bar" style="width:4%"></div>
+            </div>
+            <span class="rev-amount">£95 <small>4%</small></span>
+        </div>
+        <div class="revenue-row">
+            <span class="rev-label">Other</span>
+            <div class="rev-bar-wrap">
+                <div class="rev-bar" style="width:1%"></div>
+            </div>
+            <span class="rev-amount">£15 <small>1%</small></span>
+        </div>
+    </div>
+
+    <!-- Payment Status -->
+    <div class="section-title">Payment Status</div>
+    <div class="payment-status-bar">
+        <div class="ps-paid" style="width:75%">Paid 75% — £1,757</div>
+        <div class="ps-pending" style="width:8%">8%</div>
+        <div class="ps-overdue" style="width:17%">Overdue 17%</div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-title">Manage</div>
+    <div class="actions-grid">
+        <a href="#" class="action-card">
+            <span class="action-icon">🏠</span>
+            <span>Room Management</span>
+        </a>
+        <a href="#" class="action-card">
+            <span class="action-icon">👥</span>
+            <span>Guest Management</span>
+        </a>
+        <a href="#" class="action-card">
+            <span class="action-icon">💳</span>
+            <span>Payments</span>
+        </a>
+        <a href="#" class="action-card">
+            <span class="action-icon">🍽️</span>
+            <span>Food & Meals</span>
+        </a>
+        <a href="#" class="action-card">
+            <span class="action-icon">🔧</span>
+            <span>Services</span>
+        </a>
+        <a href="#" class="action-card">
+            <span class="action-icon">📊</span>
+            <span>Reports</span>
+        </a>
+        <a href="#" class="action-card">
+            <span class="action-icon">📢</span>
+            <span>Announcements</span>
+        </a>
+        <a href="#" class="action-card">
+            <span class="action-icon">⚙️</span>
+            <span>Settings</span>
+        </a>
+    </div>
+
+    <!-- Recent Guests Table -->
+    <div class="section-title">Recent Guests</div>
+    <div class="table-container">
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Room</th>
+                    <th>Check In</th>
+                    <th>Payment Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="4" style="text-align:center; color:#aaa;">No guests yet</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

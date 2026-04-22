@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}My Dashboard | LuckyNest{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <!-- Welcome Banner -->
+    <div class="dashboard-banner">
+        <div>
+            <h1>Welcome back, {{ session['user_name'] }}! 👋</h1>
+            <p>Here's an overview of your stay at LuckyNest</p>
+        </div>
+        <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
+    </div>
+
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <span class="kpi-label">My Room</span>
+            <span class="kpi-value">—</span>
+            <span class="kpi-sub">Not assigned yet</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Next Payment</span>
+            <span class="kpi-value">—</span>
+            <span class="kpi-sub">No active booking</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Meal Plan</span>
+            <span class="kpi-value">—</span>
+            <span class="kpi-sub">Not subscribed</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Service Requests</span>
+            <span class="kpi-value">0</span>
+            <span class="kpi-sub">Active requests</span>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-title">Quick Actions</div>
+    <div class="actions-grid">
+        <a href="#" class="action-card">
+            <span class="action-icon">🏠</span>
+            <span>My Room</span>
+        </a>
+        <a href="#" class="action-card">
+            <span class="action-icon">💳</span>
+            <span>Make Payment</span>
+        </a>
+        <a href="#" class="action-card">
+            <span class="action-icon">🍽️</span>
+            <span>Meal Plans</span>
+        </a>
+        <a href="#" class="action-card">
+            <span class="action-icon">🧺</span>
+            <span>Laundry</span>
+        </a>
+        <a href="#" class="action-card">
+            <span class="action-icon">🧹</span>
+            <span>Housekeeping</span>
+        </a>
+        <a href="#" class="action-card">
+            <span class="action-icon">👤</span>
+            <span>My Profile</span>
+        </a>
+        <a href="#" class="action-card">
+            <span class="action-icon">🔔</span>
+            <span>Notifications</span>
+        </a>
+        <a href="#" class="action-card">
+            <span class="action-icon">🚪</span>
+            <span>Visitor Entry</span>
+        </a>
+    </div>
+
+    <!-- Recent Payments -->
+    <div class="section-title">Recent Payments</div>
+    <div class="table-container">
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="4" style="text-align:center; color:#aaa;">No payment history yet</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

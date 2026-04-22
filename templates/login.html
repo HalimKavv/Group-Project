@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Login | LuckyNest CRM{% endblock %}
+
+{% block content %}
+    <section class="registration-section">
+        <div class="form-container">
+            <h2>Login</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p style="color: {% if category == 'error' %}red{% else %}lightgreen{% endif %}; text-align:center;">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('login') }}" method="POST">
+                <div class="form-group">
+                    <label for="Email">Email *</label>
+                    <input type="email" id="Email" name="Email" required>
+                </div>
+                <div class="form-group">
+                    <label for="Password">Password *</label>
+                    <input type="password" id="Password" name="Password" required>
+                </div>
+                <button type="submit" class="btn-submit">Login</button>
+            </form>
+
+            <p style="color:white; text-align:center; margin-top:15px;">
+                Don't have an account? 
+                <a href="{{ url_for('register') }}" style="color:#FFD500;">Register here</a>
+            </p>
+        </div>
+    </section>
+{% endblock %}pyt

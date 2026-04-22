@@ -6,41 +6,51 @@
     <section class="registration-section">
         <div class="form-container">
             <h2>Register</h2>
-            
-       <form action="{{ url_for('register') }}" method="POST">
-    <div class="form-group">
-        <label for="Email">Email *</label>
-        <input type="email" id="Email" name="Email" required>
-    </div>
 
-    <div class="form-row">
-        <div class="form-group half-width">
-            <label for="FirstName">First Name*</label>
-            <input type="text" id="FirstName" name="FirstName" required>
-        </div>
-        <div class="form-group half-width">
-            <label for="LastName">Last Name*</label>
-            <input type="text" id="LastName" name="LastName" required>
-        </div>
-    </div>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p style="color: {% if category == 'error' %}red{% else %}lightgreen{% endif %}; text-align:center;">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
 
-    <div class="form-group">
-        <label for="TelNo">Telephone Number*</label>
-        <input type="tel" id="TelNo" name="TelNo" required>
-    </div>
+            <form action="{{ url_for('register') }}" method="POST">
+                <div class="form-group">
+                    <label for="Email">Email *</label>
+                    <input type="email" id="Email" name="Email" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label for="FirstName">First Name *</label>
+                        <input type="text" id="FirstName" name="FirstName" required>
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="LastName">Last Name *</label>
+                        <input type="text" id="LastName" name="LastName" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="TelNo">Telephone Number *</label>
+                    <input type="tel" id="TelNo" name="TelNo" required>
+                </div>
+                <div class="form-group">
+                    <label for="Password">Password *</label>
+                    <input type="password" id="Password" name="Password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password *</label>
+                    <input type="password" id="confirmPassword" name="confirmPassword" required>
+                </div>
+                <button type="submit" class="btn-submit">Register</button>
+            </form>
 
-    <div class="form-group">
-        <label for="Password">Password*</label>
-        <input type="password" id="Password" name="Password" required>
-    </div>
-
-    <div class="form-group">
-        <label for="confirmPassword">Confirm Password*</label>
-        <input type="password" id="confirmPassword" name="confirmPassword" required>
-    </div>
-
-    <button type="submit" class="btn-submit">Register</button>
-</form>
+            <p style="color:white; text-align:center; margin-top:15px;">
+                Already have an account? 
+                <a href="{{ url_for('login') }}" style="color:#FFD500;">Login here</a>
+            </p>
         </div>
     </section>
 {% endblock %}
