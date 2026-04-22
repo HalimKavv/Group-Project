@@ -14,29 +14,29 @@
         <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
     </div>
 
-    <!-- KPI Cards -->
-    <div class="kpi-grid">
-        <div class="kpi-card highlight">
-            <span class="kpi-label">Total Revenue (MTD)</span>
-            <span class="kpi-value">£2,327</span>
-            <span class="kpi-sub trend-up">▲ 12.5% YoY</span>
-        </div>
-        <div class="kpi-card">
-            <span class="kpi-label">Active Guests</span>
-            <span class="kpi-value">42</span>
-            <span class="kpi-sub trend-down">▼ 2% vs last</span>
-        </div>
-        <div class="kpi-card">
-            <span class="kpi-label">Occupancy Rate</span>
-            <span class="kpi-value">84%</span>
-            <span class="kpi-sub trend-down">▼ 2% vs last</span>
-        </div>
-        <div class="kpi-card">
-            <span class="kpi-label">Collection Rate</span>
-            <span class="kpi-value">92%</span>
-            <span class="kpi-sub trend-up">▲ 5% vs last</span>
-        </div>
+   <!-- KPI Cards -->
+<div class="kpi-grid">
+    <div class="kpi-card highlight">
+        <span class="kpi-label">Total Revenue (MTD)</span>
+        <span class="kpi-value">£{{ "%.2f"|format(total_revenue) }}</span>
+        <span class="kpi-sub">All time collected</span>
     </div>
+    <div class="kpi-card">
+        <span class="kpi-label">Active Guests</span>
+        <span class="kpi-value">{{ total_guests }}</span>
+        <span class="kpi-sub">Registered guests</span>
+    </div>
+    <div class="kpi-card">
+        <span class="kpi-label">Occupancy Rate</span>
+        <span class="kpi-value">{{ occupancy_rate }}%</span>
+        <span class="kpi-sub">{{ occupied_rooms }}/{{ total_rooms }} rooms</span>
+    </div>
+    <div class="kpi-card">
+        <span class="kpi-label">Collection Rate</span>
+        <span class="kpi-value">{{ collection_rate }}%</span>
+        <span class="kpi-sub">Payments collected</span>
+    </div>
+</div>
 
     <!-- Revenue Breakdown -->
     <div class="section-title">Monthly Revenue Breakdown</div>
@@ -78,13 +78,16 @@
         </div>
     </div>
 
-    <!-- Payment Status -->
-    <div class="section-title">Payment Status</div>
-    <div class="payment-status-bar">
-        <div class="ps-paid" style="width:75%">Paid 75% — £1,757</div>
-        <div class="ps-pending" style="width:8%">8%</div>
-        <div class="ps-overdue" style="width:17%">Overdue 17%</div>
-    </div>
+  <!-- Payment Status -->
+<div class="section-title">Payment Status</div>
+<div class="payment-status-bar">
+    {% set paid_pct = ((paid_revenue / total_revenue * 100) | round | int) if total_revenue > 0 else 0 %}
+    {% set pending_pct = ((pending_revenue / total_revenue * 100) | round | int) if total_revenue > 0 else 0 %}
+    {% set overdue_pct = ((overdue_revenue / total_revenue * 100) | round | int) if total_revenue > 0 else 0 %}
+    <div class="ps-paid" style="width:{{ paid_pct }}%">Paid {{ paid_pct }}% — £{{ "%.2f"|format(paid_revenue) }}</div>
+    <div class="ps-pending" style="width:{{ pending_pct }}%">{{ pending_pct }}%</div>
+    <div class="ps-overdue" style="width:{{ overdue_pct }}%">Overdue {{ overdue_pct }}%</div>
+</div>
 
     <!-- Quick Actions -->
     <div class="section-title">Manage</div>
@@ -123,25 +126,20 @@
         </a>
     </div>
 
-    <!-- Recent Guests Table -->
-    <div class="section-title">Recent Guests</div>
-    <div class="table-container">
-        <table class="dash-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Room</th>
-                    <th>Check In</th>
-                    <th>Payment Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td colspan="4" style="text-align:center; color:#aaa;">No guests yet</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-</div>
+<tbody>
+    {% if recent_guests %}
+        {% for guest in recent_guests %}
+        <tr>
+            <td>{{ guest[0] }} {{ guest[1] }}</td>
+            <td>—</td>
+            <td>—</td>
+            <td><span style="color:#00cc66;">Active</span></td>
+        </tr>
+        {% endfor %}
+    {% else %}
+        <tr>
+            <td colspan="4" style="text-align:center; color:#aaa;">No guests yet</td>
+        </tr>
+    {% endif %}
+</tbody>
 {% endblock %}

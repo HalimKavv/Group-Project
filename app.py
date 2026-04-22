@@ -84,8 +84,61 @@ def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     if session['role'] == 'Owner':
-        return render_template('owner_dashboard.html')
+        conn = get_db()
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT COUNT(*) FROM Guest")
+        total_guests = cursor.fetchone()[0]
+
+        cursor.execute("SELECT COUNT(*) FROM User")
+        total_users = cursor.fetchone()[0]
+
+        cursor.execute("SELECT SUM(Amount) FROM Payment")
+        total_revenue = cursor.fetchone()[0] or 0
+
+        cursor.execute("SELECT SUM(Amount) FROM Payment WHERE Status = 'Pending'")
+        pending_revenue = cursor.fetchone()[0] or 0
+
+        cursor.execute("SELECT SUM(Amount) FROM Payment WHERE Status = 'Paid'")
+        paid_revenue = cursor.fetchone()[0] or 0
+
+        cursor.execute("SELECT SUM(Amount) FROM Payment WHERE Status = 'Overdue'")
+        overdue_revenue = cursor.fetchone()[0] or 0
+
+        cursor.execute("SELECT COUNT(*) FROM Room")
+        total_rooms = cursor.fetchone()[0] or 50
+
+        cursor.execute("SELECT COUNT(*) FROM Room WHERE IsAvailable = '0'")
+        occupied_rooms = cursor.fetchone()[0] or 0
+
+        occupancy_rate = round((occupied_rooms / total_rooms * 100)) if total_rooms > 0 else 0
+        collection_rate = round((paid_revenue / total_revenue * 100)) if total_revenue > 0 else 0
+
+        cursor.execute('''
+            SELECT g.FirstName, g.LastName, g.Email, g.TelNo
+            FROM Guest g
+            ORDER BY g.GuestID DESC
+            LIMIT 5
+        ''')
+        recent_guests = cursor.fetchall()
+
+        conn.close()
+
+        return render_template('owner_dashboard.html',
+            total_guests=total_guests,
+            total_users=total_users,
+            total_revenue=total_revenue,
+            pending_revenue=pending_revenue,
+            paid_revenue=paid_revenue,
+            overdue_revenue=overdue_revenue,
+            total_rooms=total_rooms,
+            occupied_rooms=occupied_rooms,
+            occupancy_rate=occupancy_rate,
+            collection_rate=collection_rate,
+            recent_guests=recent_guests
+        )
     return render_template('dashboard.html')
+
 @app.route('/logout')
 def logout():
     session.clear()
