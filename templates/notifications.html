@@ -1,1 +1,74 @@
+{% extends "base.html" %}
 
+{% block title %}Notifications | LuckyNest{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <!-- Page Banner -->
+    <div class="dashboard-banner">
+        <div>
+            <h1>Notifications 🔔</h1>
+            <p>Stay updated with important alerts and account activity</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn-logout">Home</a>
+    </div>
+
+    <!-- Notification Summary -->
+    <div class="kpi-grid">
+        <div class="kpi-card">
+            <span class="kpi-label">Unread</span>
+            <span class="kpi-value">0</span>
+            <span class="kpi-sub">No unread notifications</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Payment Alerts</span>
+            <span class="kpi-value">1</span>
+            <span class="kpi-sub">Upcoming payment reminder</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Service Updates</span>
+            <span class="kpi-value">0</span>
+            <span class="kpi-sub">No new service updates</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">System Messages</span>
+            <span class="kpi-value">1</span>
+            <span class="kpi-sub">General account information</span>
+        </div>
+    </div>
+
+    <!-- Notifications List -->
+    <div class="section-title">Recent Notifications</div>
+    <div class="table-container">
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Message</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Payment</td>
+                    <td>Your next accommodation payment is due soon.</td>
+                    <td>Today</td>
+                    <td>Unread</td>
+                </tr>
+                <tr>
+                    <td>Account</td>
+                    <td>Welcome to LuckyNest. Your account has been created successfully.</td>
+                    <td>Today</td>
+                    <td>Read</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align:center; color:#aaa;">More notifications will appear here</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
