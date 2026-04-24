@@ -14,80 +14,70 @@
         <a href="{{ url_for('logout') }}" class="btn-logout">Logout</a>
     </div>
 
-   <!-- KPI Cards -->
-<div class="kpi-grid">
-    <div class="kpi-card highlight">
-        <span class="kpi-label">Total Revenue (MTD)</span>
-        <span class="kpi-value">£{{ "%.2f"|format(total_revenue) }}</span>
-        <span class="kpi-sub">All time collected</span>
+    <!-- KPI Cards -->
+    <div class="kpi-grid">
+        <div class="kpi-card highlight">
+            <span class="kpi-label">Total Revenue (MTD)</span>
+            <span class="kpi-value">£{{ "%.2f"|format(total_revenue) }}</span>
+            <span class="kpi-sub">All time collected</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Active Guests</span>
+            <span class="kpi-value">{{ total_guests }}</span>
+            <span class="kpi-sub">Registered guests</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Occupancy Rate</span>
+            <span class="kpi-value">{{ occupancy_rate }}%</span>
+            <span class="kpi-sub">{{ occupied_rooms }}/{{ total_rooms }} rooms</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Collection Rate</span>
+            <span class="kpi-value">{{ collection_rate }}%</span>
+            <span class="kpi-sub">Payments collected</span>
+        </div>
     </div>
-    <div class="kpi-card">
-        <span class="kpi-label">Active Guests</span>
-        <span class="kpi-value">{{ total_guests }}</span>
-        <span class="kpi-sub">Registered guests</span>
-    </div>
-    <div class="kpi-card">
-        <span class="kpi-label">Occupancy Rate</span>
-        <span class="kpi-value">{{ occupancy_rate }}%</span>
-        <span class="kpi-sub">{{ occupied_rooms }}/{{ total_rooms }} rooms</span>
-    </div>
-    <div class="kpi-card">
-        <span class="kpi-label">Collection Rate</span>
-        <span class="kpi-value">{{ collection_rate }}%</span>
-        <span class="kpi-sub">Payments collected</span>
-    </div>
-</div>
 
     <!-- Revenue Breakdown -->
     <div class="section-title">Monthly Revenue Breakdown</div>
     <div class="revenue-grid">
         <div class="revenue-row">
             <span class="rev-label">Room Rent</span>
-            <div class="rev-bar-wrap">
-                <div class="rev-bar" style="width:64%"></div>
-            </div>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:64%"></div></div>
             <span class="rev-amount">£1,485 <small>64%</small></span>
         </div>
         <div class="revenue-row">
             <span class="rev-label">Food Services</span>
-            <div class="rev-bar-wrap">
-                <div class="rev-bar" style="width:25%"></div>
-            </div>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:25%"></div></div>
             <span class="rev-amount">£580 <small>25%</small></span>
         </div>
         <div class="revenue-row">
             <span class="rev-label">Laundry</span>
-            <div class="rev-bar-wrap">
-                <div class="rev-bar" style="width:7%"></div>
-            </div>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:7%"></div></div>
             <span class="rev-amount">£152 <small>7%</small></span>
         </div>
         <div class="revenue-row">
             <span class="rev-label">Housekeeping</span>
-            <div class="rev-bar-wrap">
-                <div class="rev-bar" style="width:4%"></div>
-            </div>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:4%"></div></div>
             <span class="rev-amount">£95 <small>4%</small></span>
         </div>
         <div class="revenue-row">
             <span class="rev-label">Other</span>
-            <div class="rev-bar-wrap">
-                <div class="rev-bar" style="width:1%"></div>
-            </div>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:1%"></div></div>
             <span class="rev-amount">£15 <small>1%</small></span>
         </div>
     </div>
 
-  <!-- Payment Status -->
-<div class="section-title">Payment Status</div>
-<div class="payment-status-bar">
-    {% set paid_pct = ((paid_revenue / total_revenue * 100) | round | int) if total_revenue > 0 else 0 %}
-    {% set pending_pct = ((pending_revenue / total_revenue * 100) | round | int) if total_revenue > 0 else 0 %}
-    {% set overdue_pct = ((overdue_revenue / total_revenue * 100) | round | int) if total_revenue > 0 else 0 %}
-    <div class="ps-paid" style="width:{{ paid_pct }}%">Paid {{ paid_pct }}% — £{{ "%.2f"|format(paid_revenue) }}</div>
-    <div class="ps-pending" style="width:{{ pending_pct }}%">{{ pending_pct }}%</div>
-    <div class="ps-overdue" style="width:{{ overdue_pct }}%">Overdue {{ overdue_pct }}%</div>
-</div>
+    <!-- Payment Status -->
+    <div class="section-title">Payment Status</div>
+    <div class="payment-status-bar">
+        {% set paid_pct = ((paid_revenue / total_revenue * 100) | round | int) if total_revenue > 0 else 0 %}
+        {% set pending_pct = ((pending_revenue / total_revenue * 100) | round | int) if total_revenue > 0 else 0 %}
+        {% set overdue_pct = ((overdue_revenue / total_revenue * 100) | round | int) if total_revenue > 0 else 0 %}
+        <div class="ps-paid" style="width:{{ paid_pct }}%">Paid {{ paid_pct }}% — £{{ "%.2f"|format(paid_revenue) }}</div>
+        <div class="ps-pending" style="width:{{ pending_pct }}%">{{ pending_pct }}%</div>
+        <div class="ps-overdue" style="width:{{ overdue_pct }}%">Overdue {{ overdue_pct }}%</div>
+    </div>
 
     <!-- Quick Actions -->
     <div class="section-title">Manage</div>
@@ -126,20 +116,36 @@
         </a>
     </div>
 
-<tbody>
-    {% if recent_guests %}
-        {% for guest in recent_guests %}
-        <tr>
-            <td>{{ guest[0] }} {{ guest[1] }}</td>
-            <td>—</td>
-            <td>—</td>
-            <td><span style="color:#00cc66;">Active</span></td>
-        </tr>
-        {% endfor %}
-    {% else %}
-        <tr>
-            <td colspan="4" style="text-align:center; color:#aaa;">No guests yet</td>
-        </tr>
-    {% endif %}
-</tbody>
+    <!-- Recent Guests -->
+    <div class="section-title">Recent Guests</div>
+    <div class="table-container">
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Room</th>
+                    <th>Check In</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if recent_guests %}
+                    {% for guest in recent_guests %}
+                    <tr>
+                        <td>{{ guest[0] }} {{ guest[1] }}</td>
+                        <td>—</td>
+                        <td>—</td>
+                        <td><span style="color:#00cc66;">Active</span></td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4" style="text-align:center; color:#aaa;">No guests yet</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
 {% endblock %}

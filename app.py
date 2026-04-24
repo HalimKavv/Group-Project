@@ -144,7 +144,11 @@ def logout():
     session.clear()
     flash('Logged out successfully.', 'success')
     return redirect(url_for('home'))
-
+@app.route('/notifications')
+def notifications():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    return render_template('notifications.html')
 if __name__ == '__main__':
     init_db()
     app.run(debug=True)
