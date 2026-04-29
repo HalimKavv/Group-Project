@@ -129,7 +129,25 @@
     font-weight: 700;
     margin-bottom: 8px;
     font-size : 16px;
-} 
+}   
+
+.btn-submit {
+    background-color: #FFD500; 
+    color: #333; 
+    padding: 12px 0;
+    font-size: 18px; 
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+
+   
+    display: block;       
+    margin: 20px auto;  
+    width: 100px;        
+}
+
 /* ---- DASHBOARD ---- */
 .dashboard-wrapper {
     padding: 40px 5%;
@@ -155,7 +173,8 @@
 .dashboard-banner p {
     color: white;
     margin-top: 5px;
-}
+} 
+
 
 .btn-logout {
     background-color: #FFD500;
