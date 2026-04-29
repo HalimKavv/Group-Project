@@ -430,7 +430,24 @@
 } 
 
 
-/* guest bookings*/ 
+
+.dashboard-section h2 {
+    color: #FFD500; 
+    margin-bottom: 10px;
+}
+
+.dashboard-section .subtitle {
+    color: #FFFFFF;
+    font-size: 16px;
+    margin-bottom: 40px;
+}
+
+
+.footer p {
+    color: #A0AEC0; 
+    text-align: center;
+    padding: 20px;
+}
 
 
 

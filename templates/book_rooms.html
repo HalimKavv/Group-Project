@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Book a Stay | LuckyNest CRM{% endblock %}
+
+{% block content %}
+<section class="registration-section"> 
+    <div class="form-container">
+        <h2>Book Your Stay</h2>
+        
+        <form action="{{ url_for('book_room') }}" method="POST">
+            
+            <div class="form-group">
+                <label for="room_id">Select Room Type *</label>
+                <select id="room_id" name="room_id" required>
+                    <option value="" disabled {% if not selected_room %}selected{% endif %}>Choose a room...</option>
+                    
+                    {% for room in rooms %}
+                        <option value="{{ room.RoomID }}" {% if selected_room == room.RoomID|string %}selected{% endif %}>
+                            {{ room.RoomType }} (Room {{ room.RoomNo }}) - ${{ room.WeeklyRate }}/week
+                        </option>
+                    {% endfor %}
+                    
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group half-width">
+                    <label for="check_in">Check-In Date *</label>
+                    <input type="date" id="check_in" name="check_in" required>
+                </div>
+                <div class="form-group half-width">
+                    <label for="check_out">Check-Out Date *</label>
+                    <input type="date" id="check_out" name="check_out" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">Confirm Booking</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
