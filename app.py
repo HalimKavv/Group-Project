@@ -151,4 +151,22 @@ def notifications():
     return render_template('notifications.html')
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True)
+    app.run(debug=True) 
+
+
+@app.route('/bookings')
+def bookings():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    # 1. Open the database connection
+    conn = get_db()
+    
+    # 2. Execute a raw SQL query to get everything from the Booking table
+    all_bookings = conn.execute('SELECT * FROM Booking').fetchall()
+    
+    # 3. Always close the connection when you are done!
+    conn.close()
+    
+    # 4. Pass the data to the HTML template just like before
+    return render_template('bookings.html', bookings=all_bookings)

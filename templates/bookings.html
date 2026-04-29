@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Bookings | LuckyNest CRM{% endblock %}
+
+{% block content %}
+<section class="dashboard-section">
+    <div class="table-container">
+        <h2>Current Bookings</h2>
+        
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Guest ID</th>
+                    <th>Room ID</th>
+                    <th>Check In</th>
+                    <th>Check Out</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>#{{ booking.BookingID }}</td>
+                    <td>{{ booking.GuestID }}</td>
+                    <td>{{ booking.RoomID }}</td>
+                    <td>{{ booking.CheckInDate }}</td>
+                    <td>{{ booking.CheckOutDate }}</td>
+                    <td><span class="status-badge">{{ booking.Status }}</span></td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" style="text-align: center;">No bookings found in the system yet.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}
