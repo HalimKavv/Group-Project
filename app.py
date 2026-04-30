@@ -265,4 +265,60 @@ def guests():
 
 if __name__ == '__main__':
     init_db()
-    app.run(debug=True)
+    app.run(debug=True) 
+
+
+@app.route('/bookings')
+def bookings():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+ 
+    conn = get_db()
+    
+   
+    all_bookings = conn.execute('SELECT * FROM Booking').fetchall()
+   
+    conn.close()
+    
+
+    return render_template('bookings.html', bookings=all_bookings) 
+
+
+@app.route('/book_room', methods=['GET', 'POST'])
+def book_room():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db()
+
+    if request.method == 'POST':
+        room_id = request.form['room_id']
+        check_in = request.form['check_in']
+        check_out = request.form['check_out']
+        status = 'Pending' 
+        
+     
+        try:
+            conn.execute('''
+                INSERT INTO Booking (GuestID, RoomID, CheckInDate, CheckOutDate, Status)
+                VALUES (?, ?, ?, ?, ?)
+            ''', (session['user_id'], room_id, check_in, check_out, status))
+            
+        
+            conn.execute("UPDATE Room SET IsAvailable = '0' WHERE RoomID = ?", (room_id,))
+            
+            conn.commit()
+        except Exception as e:
+            print(f"Booking Error: {e}")
+        finally:
+            conn.close()
+        
+        return redirect(url_for('dashboard'))
+
+   
+    selected_room = request.args.get('room_id')
+    rooms = conn.execute("SELECT * FROM Room WHERE IsAvailable = '1'").fetchall()
+    conn.close()
+    
+    return render_template('book_room.html', rooms=rooms, selected_room=selected_room)

@@ -129,7 +129,25 @@
     font-weight: 700;
     margin-bottom: 8px;
     font-size : 16px;
-} 
+}   
+
+.btn-submit {
+    background-color: #FFD500; 
+    color: #333; 
+    padding: 12px 0;
+    font-size: 18px; 
+    font-weight: bold;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+
+   
+    display: block;       
+    margin: 20px auto;  
+    width: 100px;        
+}
+
 /* ---- DASHBOARD ---- */
 .dashboard-wrapper {
     padding: 40px 5%;
@@ -155,7 +173,8 @@
 .dashboard-banner p {
     color: white;
     margin-top: 5px;
-}
+} 
+
 
 .btn-logout {
     background-color: #FFD500;
@@ -366,7 +385,92 @@
     justify-content: center;
     color: white;
     flex: 1;
+} 
+
+
+/* bookings management */ 
+.dashboard-section {
+    padding: 60px 5%;
+    display: flex;
+    justify-content: center;
 }
+
+.table-container {
+    background-color: #FFFFFF;
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 1000px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.table-container h2 {
+    color: #051094; 
+    margin-bottom: 25px;
+    font-size: 28px;
+    border-bottom: 3px solid #FFD500;
+    padding-bottom: 10px;
+    display: inline-block;
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.data-table th, .data-table td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #E2E8F0;
+}
+
+.data-table th {
+    background-color: #051094;
+    color: #FFFFFF;
+    font-weight: 600;
+}
+
+
+.data-table th:first-child { border-top-left-radius: 10px; }
+.data-table th:last-child { border-top-right-radius: 10px; }
+
+.data-table tr:hover {
+    background-color: #F7FAFC; 
+}
+
+
+.status-badge {
+    background-color: #DFB000;
+    color: #051094;
+    padding: 5px 12px;
+    border-radius: 15px;
+    font-size: 14px;
+    font-weight: bold;
+} 
+
+
+
+.dashboard-section h2 {
+    color: #FFD500; 
+    margin-bottom: 10px;
+}
+
+.dashboard-section .subtitle {
+    color: #FFFFFF;
+    font-size: 16px;
+    margin-bottom: 40px;
+}
+
+
+.footer p {
+    color: #A0AEC0; 
+    text-align: center;
+    padding: 20px;
+}
+
+
+
+
 
 /* Responsive */
 @media (max-width: 768px) {
