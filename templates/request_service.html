@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Request Service | LuckyNest{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <div class="dashboard-banner">
+        <div>
+            <h1>Request a Service 🔧</h1>
+            <p>Submit a service request for your room</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn-logout">← Dashboard</a>
+    </div>
+
+    <div style="display:flex; justify-content:center;">
+        <div class="form-container">
+            <h2>Service Request</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p style="color: {% if category == 'error' %}red{% else %}lightgreen{% endif %}; text-align:center;">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('request_service') }}" method="POST">
+                <div class="form-group">
+                    <label for="ServiceID">Select Service *</label>
+                    <select id="ServiceID" name="ServiceID" required>
+                        <option value="">Choose a service...</option>
+                        {% for service in services %}
+                        <option value="{{ service.ServiceID }}">
+                            {{ service.ServiceName }} — {{ service.ServicePrice }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="RequestDetails">Details *</label>
+                    <textarea id="RequestDetails" name="RequestDetails" rows="4"
+                              placeholder="Describe what you need..."
+                              required style="background-color:#0a1db5; border:1px solid #00A2FF55;
+                              border-radius:8px; padding:12px; color:white; font-size:15px;
+                              width:100%; resize:vertical;"></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit" style="width:100%;">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

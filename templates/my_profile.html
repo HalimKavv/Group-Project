@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile | LuckyNest{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <div class="dashboard-banner">
+        <div>
+            <h1>My Profile 👤</h1>
+            <p>Your personal information at LuckyNest</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn-logout">← Dashboard</a>
+    </div>
+
+    {% if guest %}
+    <div class="kpi-grid">
+        <div class="kpi-card highlight">
+            <span class="kpi-label">Full Name</span>
+            <span class="kpi-value" style="font-size:20px;">{{ guest.FirstName }} {{ guest.LastName }}</span>
+            <span class="kpi-sub">{{ guest.Role }}</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Email</span>
+            <span class="kpi-value" style="font-size:16px;">{{ guest.Email }}</span>
+            <span class="kpi-sub">Contact email</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Phone</span>
+            <span class="kpi-value" style="font-size:20px;">{{ guest.TelNo }}</span>
+            <span class="kpi-sub">Contact number</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Date of Birth</span>
+            <span class="kpi-value" style="font-size:20px;">{{ guest.DOB if guest.DOB else '—' }}</span>
+            <span class="kpi-sub">Personal info</span>
+        </div>
+    </div>
+
+    <div class="section-title">Personal Details</div>
+    <div class="revenue-grid">
+        <div class="revenue-row">
+            <span class="rev-label">Occupation</span>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:100%"></div></div>
+            <span class="rev-amount">{{ guest.Occupation if guest.Occupation else '—' }}</span>
+        </div>
+        <div class="revenue-row">
+            <span class="rev-label">Address</span>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:100%"></div></div>
+            <span class="rev-amount" style="font-size:12px;">{{ guest.Address if guest.Address else '—' }}</span>
+        </div>
+        <div class="revenue-row">
+            <span class="rev-label">ID Type</span>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:100%"></div></div>
+            <span class="rev-amount">{{ guest.IDProofType if guest.IDProofType else '—' }}</span>
+        </div>
+        <div class="revenue-row">
+            <span class="rev-label">ID Number</span>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:100%"></div></div>
+            <span class="rev-amount">{{ guest.IDNumber if guest.IDNumber else '—' }}</span>
+        </div>
+    </div>
+
+    <div class="section-title">Emergency Contact</div>
+    <div class="revenue-grid">
+        <div class="revenue-row">
+            <span class="rev-label">Name</span>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:100%"></div></div>
+            <span class="rev-amount">{{ guest.EmergencyContactName if guest.EmergencyContactName else '—' }}</span>
+        </div>
+        <div class="revenue-row">
+            <span class="rev-label">Relationship</span>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:100%"></div></div>
+            <span class="rev-amount">{{ guest.EmergencyContactRelationship if guest.EmergencyContactRelationship else '—' }}</span>
+        </div>
+        <div class="revenue-row">
+            <span class="rev-label">Phone</span>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:100%"></div></div>
+            <span class="rev-amount">{{ guest.EmergencyContactNumber if guest.EmergencyContactNumber else '—' }}</span>
+        </div>
+    </div>
+    {% else %}
+        <p style="color:#aaa; text-align:center; padding:40px;">Profile not found.</p>
+    {% endif %}
+
+</div>
+{% endblock %}

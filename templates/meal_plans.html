@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Meal Plans | LuckyNest{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <div class="dashboard-banner">
+        <div>
+            <h1>Meal Plans 🍽️</h1>
+            <p>Choose a meal plan that suits your lifestyle</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn-logout">← Dashboard</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p style="color: {% if category == 'error' %}red{% else %}lightgreen{% endif %}; text-align:center; margin-bottom:15px;">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if subscription %}
+    <div class="announcement-card" style="border-left-color:#00cc66;">
+        <div class="announcement-header">
+            <div>
+                <span class="announcement-type" style="background:#00cc66; color:#333;">Active</span>
+                <h2 class="announcement-title">Current Plan: {{ subscription.PlanName }}</h2>
+            </div>
+            <span class="announcement-date">Since {{ subscription.StartDate }}</span>
+        </div>
+        <p class="announcement-body">You are currently subscribed to this meal plan.</p>
+    </div>
+    {% endif %}
+
+    <div class="section-title">Available Plans</div>
+    <div class="actions-grid" style="grid-template-columns: repeat(3, 1fr);">
+        {% if plans %}
+            {% for plan in plans %}
+            <div class="kpi-card" style="text-align:center;">
+                <span class="kpi-label">{{ plan.PlanName }}</span>
+                <span class="kpi-value">£{{ "%.2f"|format(plan.PlanPrice) }}</span>
+                <span class="kpi-sub">per month</span>
+                <a href="{{ url_for('subscribe_meal', plan_id=plan.PlanID) }}"
+                   style="margin-top:15px; background:#FFD500; color:#333; padding:10px 20px;
+                          border-radius:8px; text-decoration:none; font-weight:bold;
+                          display:inline-block;">
+                    Subscribe
+                </a>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div style="text-align:center; padding:40px; color:#aaa; grid-column: span 3;">
+                No meal plans available yet
+            </div>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

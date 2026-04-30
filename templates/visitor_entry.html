@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}Visitor Entry | LuckyNest{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <div class="dashboard-banner">
+        <div>
+            <h1>Visitor Entry 🚪</h1>
+            <p>Log and manage your visitors</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn-logout">← Dashboard</a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p style="color: {% if category == 'error' %}red{% else %}lightgreen{% endif %}; text-align:center; margin-bottom:15px;">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div style="display:flex; justify-content:center; margin-bottom:40px;">
+        <div class="form-container">
+            <h2>Log a Visitor</h2>
+
+            <form action="{{ url_for('visitor_entry') }}" method="POST">
+                <div class="form-group">
+                    <label for="VisitorName">Visitor Name *</label>
+                    <input type="text" id="VisitorName" name="VisitorName"
+                           placeholder="Full name" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label for="IDType">ID Type *</label>
+                        <select id="IDType" name="IDType" required>
+                            <option value="">Select...</option>
+                            <option value="Passport">Passport</option>
+                            <option value="Driving License">Driving License</option>
+                            <option value="National ID">National ID</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="NumberOfID">ID Number *</label>
+                        <input type="text" id="NumberOfID" name="NumberOfID"
+                               placeholder="ID number" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="VisitPurpose">Purpose of Visit *</label>
+                    <select id="VisitPurpose" name="VisitPurpose" required>
+                        <option value="">Select...</option>
+                        <option value="Family">Family</option>
+                        <option value="Friend">Friend</option>
+                        <option value="Service">Service</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label for="TimeIn">Time In *</label>
+                        <input type="datetime-local" id="TimeIn" name="TimeIn" required>
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="TimeOut">Expected Time Out *</label>
+                        <input type="datetime-local" id="TimeOut" name="TimeOut" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-submit" style="width:100%;">Log Visitor</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="section-title">Visitor History</div>
+    <div class="table-container">
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>Visitor</th>
+                    <th>Purpose</th>
+                    <th>Time In</th>
+                    <th>Time Out</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if visitor_logs %}
+                    {% for log in visitor_logs %}
+                    <tr>
+                        <td><strong style="color:#FFD500;">{{ log.VisitorName }}</strong></td>
+                        <td>{{ log.VisitPurpose }}</td>
+                        <td>{{ log.TimeIn }}</td>
+                        <td>{{ log.TimeOut }}</td>
+                        <td>
+                            {% if log.GuestApprovalStatus == 'Approved' %}
+                                <span style="color:#00cc66;">Approved</span>
+                            {% else %}
+                                <span style="color:#FFA500;">{{ log.GuestApprovalStatus }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" style="text-align:center; color:#aaa; padding:30px;">
+                            No visitors logged yet
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Services | LuckyNest{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <div class="dashboard-banner">
+        <div>
+            <h1>Services 🔧</h1>
+            <p>Available services at LuckyNest</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn-logout">← Dashboard</a>
+    </div>
+
+    <div class="section-title">Available Services</div>
+    <div class="table-container">
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Availability</th>
+                    <th>Price</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if services %}
+                    {% for service in services %}
+                    <tr>
+                        <td><strong style="color:#FFD500;">{{ service.ServiceName }}</strong></td>
+                        <td>{{ service.Availability }}</td>
+                        <td>{{ service.ServicePrice }}</td>
+                        <td>
+                            <a href="{{ url_for('request_service') }}?service_id={{ service.ServiceID }}"
+                               style="color:#00A2FF; text-decoration:none;">Request</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4" style="text-align:center; color:#aaa; padding:30px;">
+                            No services available yet
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if session['role'] == 'Owner' %}
+    <div style="text-align:center; margin-top:20px;">
+        <a href="{{ url_for('add_service') }}" class="btn-logout">+ Add Service</a>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
