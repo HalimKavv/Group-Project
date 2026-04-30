@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Add Room | LuckyNest{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <div class="dashboard-banner">
+        <div>
+            <h1>Add New Room 🏠</h1>
+            <p>Fill in the details to add a new room to LuckyNest</p>
+        </div>
+        <a href="{{ url_for('rooms') }}" class="btn-logout">← Back to Rooms</a>
+    </div>
+
+    <div style="display:flex; justify-content:center;">
+        <div class="form-container">
+            <h2>Room Details</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p style="color: {% if category == 'error' %}red{% else %}lightgreen{% endif %}; text-align:center;">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('add_room') }}" method="POST">
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label for="RoomNo">Room Number *</label>
+                        <input type="text" id="RoomNo" name="RoomNo" placeholder="e.g. 101" required>
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="FloorLevel">Floor Level *</label>
+                        <select id="FloorLevel" name="FloorLevel" required>
+                            <option value="">Select floor...</option>
+                            <option value="Ground">Ground</option>
+                            <option value="1">Floor 1</option>
+                            <option value="2">Floor 2</option>
+                            <option value="3">Floor 3</option>
+                            <option value="4">Floor 4</option>
+                            <option value="5">Floor 5</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="RoomType">Room Type *</label>
+                    <select id="RoomType" name="RoomType" required>
+                        <option value="">Select type...</option>
+                        <option value="Single">Single</option>
+                        <option value="Double">Double</option>
+                        <option value="Triple">Triple</option>
+                    </select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label for="WeeklyRate">Weekly Rate (£) *</label>
+                        <input type="number" id="WeeklyRate" name="WeeklyRate" 
+                               step="0.01" placeholder="e.g. 150.00" required>
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="MonthlyRate">Monthly Rate (£) *</label>
+                        <input type="number" id="MonthlyRate" name="MonthlyRate" 
+                               step="0.01" placeholder="e.g. 600.00" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="SecurityDeposit">Security Deposit (£) *</label>
+                    <input type="number" id="SecurityDeposit" name="SecurityDeposit" 
+                           step="0.01" placeholder="e.g. 750.00" required>
+                </div>
+
+                <button type="submit" class="btn-submit" style="width:100%;">Add Room</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

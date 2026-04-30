@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Room Management | LuckyNest{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <div class="dashboard-banner">
+        <div>
+            <h1>Room Management 🏠</h1>
+            <p>View and manage all rooms in LuckyNest</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+            {% if session['role'] == 'Owner' %}
+            <a href="{{ url_for('add_room') }}" class="btn-logout">+ Add Room</a>
+            {% endif %}
+            <a href="{{ url_for('dashboard') }}" class="btn-logout">← Dashboard</a>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p style="color: {% if category == 'error' %}red{% else %}lightgreen{% endif %}; text-align:center; margin-bottom:15px;">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="kpi-grid">
+        <div class="kpi-card highlight">
+            <span class="kpi-label">Total Rooms</span>
+            <span class="kpi-value">{{ rooms|length }}</span>
+            <span class="kpi-sub">In the system</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Available</span>
+            <span class="kpi-value" style="color:#00cc66;">
+                {{ rooms|selectattr('IsAvailable', 'equalto', '1')|list|length }}
+            </span>
+            <span class="kpi-sub">Ready to book</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Occupied</span>
+            <span class="kpi-value" style="color:#ff4444;">
+                {{ rooms|selectattr('IsAvailable', 'equalto', '0')|list|length }}
+            </span>
+            <span class="kpi-sub">Currently booked</span>
+        </div>
+        <div class="kpi-card">
+            <span class="kpi-label">Occupancy Rate</span>
+            <span class="kpi-value">
+                {% if rooms|length > 0 %}
+                    {{ ((rooms|selectattr('IsAvailable', 'equalto', '0')|list|length) / rooms|length * 100)|round|int }}%
+                {% else %}0%{% endif %}
+            </span>
+            <span class="kpi-sub">Of total rooms</span>
+        </div>
+    </div>
+
+    <div class="section-title">All Rooms</div>
+    <div class="table-container">
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>Room No</th>
+                    <th>Floor</th>
+                    <th>Type</th>
+                    <th>Weekly Rate</th>
+                    <th>Monthly Rate</th>
+                    <th>Security Deposit</th>
+                    <th>Status</th>
+                    {% if session['role'] == 'Owner' %}
+                    <th>Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% if rooms %}
+                    {% for room in rooms %}
+                    <tr>
+                        <td><strong style="color:#FFD500;">{{ room.RoomNo }}</strong></td>
+                        <td>Floor {{ room.FloorLevel }}</td>
+                        <td>{{ room.RoomType }}</td>
+                        <td>£{{ "%.2f"|format(room.WeeklyRate) }}</td>
+                        <td>£{{ "%.2f"|format(room.MonthlyRate) }}</td>
+                        <td>£{{ "%.2f"|format(room.SecurityDeposit) }}</td>
+                        <td>
+                            {% if room.IsAvailable == '1' %}
+                                <span style="color:#00cc66; font-weight:bold;">Available</span>
+                            {% else %}
+                                <span style="color:#ff4444; font-weight:bold;">Occupied</span>
+                            {% endif %}
+                        </td>
+                        {% if session['role'] == 'Owner' %}
+                        <td>
+                            <a href="{{ url_for('delete_room', room_id=room.RoomID) }}"
+                               style="color:#ff4444; text-decoration:none; font-size:13px;"
+                               onclick="return confirm('Delete this room?')">Delete</a>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" style="text-align:center; color:#aaa; padding:30px;">
+                            No rooms added yet
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Guest Management | LuckyNest{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <div class="dashboard-banner">
+        <div>
+            <h1>Guest Management 👥</h1>
+            <p>View and manage all registered guests</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn-logout">← Dashboard</a>
+    </div>
+
+    <div class="section-title">All Guests</div>
+    <div class="table-container">
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Room</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if guests %}
+                    {% for guest in guests %}
+                    <tr>
+                        <td>#{{ guest.GuestID }}</td>
+                        <td><strong style="color:#FFD500;">{{ guest.FirstName }} {{ guest.LastName }}</strong></td>
+                        <td>{{ guest.Email }}</td>
+                        <td>{{ guest.TelNo }}</td>
+                        <td>{{ guest.RoomNo if guest.RoomNo else '—' }}</td>
+                        <td><span style="color:#00cc66;">Active</span></td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align:center; color:#aaa; padding:30px;">
+                            No guests registered yet
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

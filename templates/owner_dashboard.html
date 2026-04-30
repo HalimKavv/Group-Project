@@ -82,13 +82,17 @@
     <!-- Quick Actions -->
     <div class="section-title">Manage</div>
     <div class="actions-grid">
-        <a href="#" class="action-card">
+        <a href="{{ url_for('rooms') }}" class="action-card">
             <span class="action-icon">🏠</span>
             <span>Room Management</span>
         </a>
-        <a href="#" class="action-card">
+        <a href="{{ url_for('guests') }}" class="action-card">
             <span class="action-icon">👥</span>
             <span>Guest Management</span>
+        </a>
+        <a href="{{ url_for('bookings') }}" class="action-card">
+            <span class="action-icon">📋</span>
+            <span>Bookings</span>
         </a>
         <a href="#" class="action-card">
             <span class="action-icon">💳</span>
@@ -103,16 +107,12 @@
             <span>Services</span>
         </a>
         <a href="#" class="action-card">
-            <span class="action-icon">📊</span>
-            <span>Reports</span>
-        </a>
-        <a href="#" class="action-card">
             <span class="action-icon">📢</span>
             <span>Announcements</span>
         </a>
         <a href="#" class="action-card">
-            <span class="action-icon">⚙️</span>
-            <span>Settings</span>
+            <span class="action-icon">📊</span>
+            <span>Reports</span>
         </a>
     </div>
 
