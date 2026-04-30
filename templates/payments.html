@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Payments | LuckyNest{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <div class="dashboard-banner">
+        <div>
+            <h1>Payment Management 💳</h1>
+            <p>View and record all guest payments</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <a href="{{ url_for('add_payment') }}" class="btn-logout">+ Record Payment</a>
+            <a href="{{ url_for('dashboard') }}" class="btn-logout">← Dashboard</a>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p style="color: {% if category == 'error' %}red{% else %}lightgreen{% endif %}; text-align:center; margin-bottom:15px;">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <div class="section-title">All Payments</div>
+    <div class="table-container">
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Guest</th>
+                    <th>Room</th>
+                    <th>Amount</th>
+                    <th>Method</th>
+                    <th>Date</th>
+                    <th>Late Fee</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if payments %}
+                    {% for p in payments %}
+                    <tr>
+                        <td>#{{ p.PaymentID }}</td>
+                        <td><strong style="color:#FFD500;">{{ p.FirstName }} {{ p.LastName }}</strong></td>
+                        <td>Room {{ p.RoomNo }}</td>
+                        <td>£{{ "%.2f"|format(p.Amount) }}</td>
+                        <td>{{ p.PayMethod }}</td>
+                        <td>{{ p.PaymentDate[:10] }}</td>
+                        <td>
+                            {% if p.LateFeeApplied %}
+                                <span style="color:#ff4444;">£{{ "%.2f"|format(p.LateFeeAmount) }}</span>
+                            {% else %}
+                                <span style="color:#aaa;">None</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if p.Status == 'Paid' %}
+                                <span style="color:#00cc66; font-weight:bold;">Paid</span>
+                            {% elif p.Status == 'Pending' %}
+                                <span style="color:#FFA500; font-weight:bold;">Pending</span>
+                            {% else %}
+                                <span style="color:#ff4444; font-weight:bold;">Overdue</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" style="text-align:center; color:#aaa; padding:30px;">
+                            No payments recorded yet
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

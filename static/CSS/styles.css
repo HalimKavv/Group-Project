@@ -468,8 +468,81 @@
     padding: 20px;
 }
 
+/* Form inputs and selects */
+.form-container input,
+.form-container select {
+    background-color: #0a1db5;
+    border: 1px solid #00A2FF55;
+    border-radius: 8px;
+    padding: 12px;
+    color: white;
+    font-size: 15px;
+    width: 100%;
+}
 
+.form-container input::placeholder {
+    color: #aaa;
+}
 
+.form-container select option {
+    background-color: #051094;
+    color: white;
+}
+
+.form-container input:focus,
+.form-container select:focus {
+    outline: none;
+    border-color: #FFD500;
+}
+
+/* Announcements */
+.announcement-card {
+    background-color: #051094;
+    border-radius: 12px;
+    padding: 25px 30px;
+    margin-bottom: 20px;
+    border-left: 5px solid #00A2FF;
+}
+
+.announcement-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.announcement-title {
+    color: #FFD500;
+    font-size: 20px;
+    margin-top: 8px;
+}
+
+.announcement-date {
+    color: #aaa;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.announcement-body {
+    color: white;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.announcement-type {
+    font-size: 11px;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.announcement-type.general { background-color: #00A2FF; color: white; }
+.announcement-type.maintenance { background-color: #FFA500; color: #333; }
+.announcement-type.emergency { background-color: #ff4444; color: white; }
+.announcement-type.payment { background-color: #00cc66; color: #333; }
+.announcement-type.event { background-color: #9b59b6; color: white; }
 
 
 /* Responsive */

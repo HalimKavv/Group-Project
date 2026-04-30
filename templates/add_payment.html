@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}Record Payment | LuckyNest{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <div class="dashboard-banner">
+        <div>
+            <h1>Record Payment 💳</h1>
+            <p>Log a new payment for a guest booking</p>
+        </div>
+        <a href="{{ url_for('payments') }}" class="btn-logout">← Back to Payments</a>
+    </div>
+
+    <div style="display:flex; justify-content:center;">
+        <div class="form-container">
+            <h2>Payment Details</h2>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <p style="color: {% if category == 'error' %}red{% else %}lightgreen{% endif %}; text-align:center;">
+                            {{ message }}
+                        </p>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form action="{{ url_for('add_payment') }}" method="POST">
+                <div class="form-group">
+                    <label for="BookingID">Select Booking *</label>
+                    <select id="BookingID" name="BookingID" required
+                            onchange="fillGuest(this)">
+                        <option value="">Choose a booking...</option>
+                        {% for b in bookings %}
+                        <option value="{{ b.BookingID }}"
+                                data-guest="{{ b.GuestID }}"
+                                data-room="{{ b.RoomID }}">
+                            #{{ b.BookingID }} — {{ b.FirstName }} {{ b.LastName }} (Room {{ b.RoomNo }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <input type="hidden" id="GuestID" name="GuestID">
+                <input type="hidden" id="RoomID" name="RoomID">
+
+                <div class="form-row">
+                    <div class="form-group half-width">
+                        <label for="Amount">Amount (£) *</label>
+                        <input type="number" id="Amount" name="Amount"
+                               step="0.01" placeholder="e.g. 600.00" required>
+                    </div>
+                    <div class="form-group half-width">
+                        <label for="LateFeeAmount">Late Fee (£)</label>
+                        <input type="number" id="LateFeeAmount" name="LateFeeAmount"
+                               step="0.01" placeholder="0.00">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="PayMethod">Payment Method *</label>
+                    <select id="PayMethod" name="PayMethod" required>
+                        <option value="">Select method...</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Debit Card">Debit Card</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Digital Wallet">Digital Wallet</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="Status">Status *</label>
+                    <select id="Status" name="Status" required>
+                        <option value="Paid">Paid</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Overdue">Overdue</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-submit" style="width:100%;">Record Payment</button>
+            </form>
+        </div>
+    </div>
+
+</div>
+
+<script>
+function fillGuest(select) {
+    const option = select.options[select.selectedIndex];
+    document.getElementById('GuestID').value = option.dataset.guest || '';
+    document.getElementById('RoomID').value = option.dataset.room || '';
+}
+</script>
+
+{% endblock %}

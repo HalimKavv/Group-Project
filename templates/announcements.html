@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block title %}Announcements | LuckyNest{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <div class="dashboard-banner">
+        <div>
+            <h1>Announcements 📢</h1>
+            <p>Important notices and updates from LuckyNest management</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+            {% if session['role'] == 'Owner' %}
+            <a href="{{ url_for('add_announcement') }}" class="btn-logout">+ New Announcement</a>
+            {% endif %}
+            <a href="{{ url_for('dashboard') }}" class="btn-logout">← Dashboard</a>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <p style="color: {% if category == 'error' %}red{% else %}lightgreen{% endif %}; text-align:center; margin-bottom:15px;">
+                    {{ message }}
+                </p>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    {% if announcements %}
+        {% for a in announcements %}
+        <div class="announcement-card">
+            <div class="announcement-header">
+                <div>
+                    <span class="announcement-type {{ a.AnnouncementType | lower }}">{{ a.AnnouncementType }}</span>
+                    <h2 class="announcement-title">{{ a.Title }}</h2>
+                </div>
+                <div style="display:flex; align-items:center; gap:15px;">
+                    <span class="announcement-date">{{ a.AnnouncementDate[:10] }}</span>
+                    {% if session['role'] == 'Owner' %}
+                    <a href="{{ url_for('delete_announcement', announcement_id=a.AnnouncementID) }}"
+                       style="color:#ff4444; text-decoration:none; font-size:13px;"
+                       onclick="return confirm('Delete this announcement?')">Delete</a>
+                    {% endif %}
+                </div>
+            </div>
+            <p class="announcement-body">{{ a.Description }}</p>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div style="text-align:center; padding:60px; color:#aaa;">
+            <p style="font-size:48px;">📢</p>
+            <p style="margin-top:15px;">No announcements yet</p>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}

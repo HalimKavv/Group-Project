@@ -16,60 +16,104 @@
 
     <!-- KPI Cards -->
     <div class="kpi-grid">
-        <div class="kpi-card">
+        <div class="kpi-card highlight">
             <span class="kpi-label">My Room</span>
-            <span class="kpi-value">—</span>
-            <span class="kpi-sub">Not assigned yet</span>
+            <span class="kpi-value">
+                {% if booking %}{{ booking.RoomNo }}{% else %}—{% endif %}
+            </span>
+            <span class="kpi-sub">
+                {% if booking %}{{ booking.RoomType }}{% else %}Not assigned yet{% endif %}
+            </span>
         </div>
         <div class="kpi-card">
-            <span class="kpi-label">Next Payment</span>
-            <span class="kpi-value">—</span>
-            <span class="kpi-sub">No active booking</span>
+            <span class="kpi-label">Booking Status</span>
+            <span class="kpi-value" style="font-size:20px;">
+                {% if booking %}{{ booking.Status }}{% else %}—{% endif %}
+            </span>
+            <span class="kpi-sub">
+                {% if booking %}Check in: {{ booking.CheckInDate }}{% else %}No active booking{% endif %}
+            </span>
         </div>
         <div class="kpi-card">
             <span class="kpi-label">Meal Plan</span>
-            <span class="kpi-value">—</span>
-            <span class="kpi-sub">Not subscribed</span>
+            <span class="kpi-value" style="font-size:20px;">
+                {% if meal_plan %}{{ meal_plan.PlanName }}{% else %}—{% endif %}
+            </span>
+            <span class="kpi-sub">
+                {% if meal_plan %}{{ meal_plan.Status }}{% else %}Not subscribed{% endif %}
+            </span>
         </div>
         <div class="kpi-card">
             <span class="kpi-label">Service Requests</span>
-            <span class="kpi-value">0</span>
-            <span class="kpi-sub">Active requests</span>
+            <span class="kpi-value">{{ active_requests }}</span>
+            <span class="kpi-sub">Pending requests</span>
         </div>
     </div>
+
+    <!-- Room Details -->
+    {% if booking %}
+    <div class="section-title">My Room Details</div>
+    <div class="revenue-grid">
+        <div class="revenue-row">
+            <span class="rev-label">Room Number</span>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:100%"></div></div>
+            <span class="rev-amount">{{ booking.RoomNo }}</span>
+        </div>
+        <div class="revenue-row">
+            <span class="rev-label">Room Type</span>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:100%"></div></div>
+            <span class="rev-amount">{{ booking.RoomType }}</span>
+        </div>
+        <div class="revenue-row">
+            <span class="rev-label">Weekly Rate</span>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:60%"></div></div>
+            <span class="rev-amount">£{{ "%.2f"|format(booking.WeeklyRate) }}</span>
+        </div>
+        <div class="revenue-row">
+            <span class="rev-label">Monthly Rate</span>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:100%"></div></div>
+            <span class="rev-amount">£{{ "%.2f"|format(booking.MonthlyRate) }}</span>
+        </div>
+        <div class="revenue-row">
+            <span class="rev-label">Check Out</span>
+            <div class="rev-bar-wrap"><div class="rev-bar" style="width:80%"></div></div>
+            <span class="rev-amount">{{ booking.CheckOutDate }}</span>
+        </div>
+    </div>
+    {% endif %}
 
     <!-- Quick Actions -->
     <div class="section-title">Quick Actions</div>
     <div class="actions-grid">
-    <a href="{{ url_for('book_room') }}" class="action-card">
+        <a href="{{ url_for('book_room') }}" class="action-card">
             <span class="action-icon">🏠</span>
-            <span>My Room</span>
+            <span>Book a Room</span>
         </a>
-        <a href="#" class="action-card">
-            <span class="action-icon">💳</span>
-            <span>Make Payment</span>
+        <a href="{{ url_for('bookings') }}" class="action-card">
+            <span class="action-icon">📋</span>
+            <span>My Bookings</span>
         </a>
-        <a href="#" class="action-card">
+        <a href="{{ url_for('meal_plans') }}" class="action-card">
             <span class="action-icon">🍽️</span>
             <span>Meal Plans</span>
         </a>
-        <a href="#" class="action-card">
-            <span class="action-icon">🧺</span>
-            <span>Laundry</span>
+        <a href="{{ url_for('request_service') }}" class="action-card">
+            <span class="action-icon">🔧</span>
+            <span>Services</span>
         </a>
-        <a href="#" class="action-card">
-            <span class="action-icon">🧹</span>
-            <span>Housekeeping</span>
+        <a href="{{ url_for('announcements') }}" class="action-card">
+            <span class="action-icon">📢</span>
+            <span>Announcements</span>
         </a>
-        <a href="#" class="action-card">
+        <a href="{{ url_for('my_profile') }}" class="action-card">
             <span class="action-icon">👤</span>
             <span>My Profile</span>
         </a>
-  <a href="{{ url_for('notifications') }}" class="action-card">
-    <span class="action-icon">🔔</span>
-    <span>Notifications</span>
-</a>
-        <a href="#" class="action-card">
+        <a href="{{ url_for('notifications') }}" class="action-card">
+            <span class="action-icon">🔔</span>
+            <span>Notifications</span>
+        </a>
+        <a href="{{ url_for('visitor_entry') }}" class="action-card">
             <span class="action-icon">🚪</span>
             <span>Visitor Entry</span>
         </a>
@@ -82,18 +126,66 @@
             <thead>
                 <tr>
                     <th>Date</th>
-                    <th>Description</th>
+                    <th>Method</th>
                     <th>Amount</th>
                     <th>Status</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td colspan="4" style="text-align:center; color:#aaa;">No payment history yet</td>
-                </tr>
+                {% if recent_payments %}
+                    {% for payment in recent_payments %}
+                    <tr>
+                        <td>{{ payment.PaymentDate[:10] }}</td>
+                        <td>{{ payment.PayMethod }}</td>
+                        <td>£{{ "%.2f"|format(payment.Amount) }}</td>
+                        <td>
+                            {% if payment.Status == 'Paid' %}
+                                <span style="color:#00cc66;">Paid</span>
+                            {% elif payment.Status == 'Pending' %}
+                                <span style="color:#FFA500;">Pending</span>
+                            {% else %}
+                                <span style="color:#ff4444;">Overdue</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4" style="text-align:center; color:#aaa;">No payment history yet</td>
+                    </tr>
+                {% endif %}
             </tbody>
         </table>
     </div>
 
+    <!-- Recent Announcements -->
+    <div class="section-title">Latest Announcements</div>
+    <div class="table-container">
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Title</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if latest_announcements %}
+                    {% for a in latest_announcements %}
+                    <tr>
+                        <td><span class="announcement-type {{ a.AnnouncementType | lower }}">{{ a.AnnouncementType }}</span></td>
+                        <td>{{ a.Title }}</td>
+                        <td>{{ a.AnnouncementDate[:10] }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="3" style="text-align:center; color:#aaa;">No announcements yet</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    
 </div>
 {% endblock %}

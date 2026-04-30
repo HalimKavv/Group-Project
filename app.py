@@ -77,6 +77,7 @@ def login():
 def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
+
     if session['role'] == 'Owner':
         conn = get_db()
         cursor = conn.cursor()
@@ -130,7 +131,61 @@ def dashboard():
             collection_rate=collection_rate,
             recent_guests=recent_guests
         )
-    return render_template('dashboard.html')
+
+    # Guest dashboard
+    conn = get_db()
+    cursor = conn.cursor()
+
+    cursor.execute('''
+        SELECT b.BookingID, b.CheckInDate, b.CheckOutDate, b.Status,
+               r.RoomNo, r.RoomType, r.MonthlyRate, r.WeeklyRate
+        FROM Booking b
+        JOIN Room r ON b.RoomID = r.RoomID
+        JOIN Guest g ON b.GuestID = g.GuestID
+        WHERE g.UserID = ?
+        ORDER BY b.BookingID DESC LIMIT 1
+    ''', (session['user_id'],))
+    booking = cursor.fetchone()
+
+    cursor.execute('''
+        SELECT p.PaymentDate, p.Amount, p.PayMethod, p.Status
+        FROM Payment p
+        JOIN Guest g ON p.GuestID = g.GuestID
+        WHERE g.UserID = ?
+        ORDER BY p.PaymentDate DESC LIMIT 5
+    ''', (session['user_id'],))
+    recent_payments = cursor.fetchall()
+
+    cursor.execute('''
+        SELECT COUNT(*) FROM ServiceRequest sr
+        JOIN Guest g ON sr.GuestID = g.GuestID
+        WHERE g.UserID = ? AND sr.Status = 'Pending'
+    ''', (session['user_id'],))
+    active_requests = cursor.fetchone()[0]
+
+    cursor.execute('''
+        SELECT mp.PlanName, ms.Status
+        FROM MealSubscription ms
+        JOIN MealPlan mp ON ms.PlanID = mp.PlanID
+        JOIN Guest g ON ms.GuestID = g.GuestID
+        WHERE g.UserID = ? AND ms.Status = 'Active'
+        LIMIT 1
+    ''', (session['user_id'],))
+    meal_plan = cursor.fetchone()
+
+    cursor.execute('''
+        SELECT * FROM Announcement ORDER BY AnnouncementDate DESC LIMIT 3
+    ''')
+    latest_announcements = cursor.fetchall()
+
+    conn.close()
+    return render_template('dashboard.html',
+        booking=booking,
+        recent_payments=recent_payments,
+        active_requests=active_requests,
+        meal_plan=meal_plan,
+        latest_announcements=latest_announcements
+    )
 
 @app.route('/logout')
 def logout():
@@ -150,7 +205,7 @@ def bookings():
         return redirect(url_for('login'))
     conn = get_db()
     all_bookings = conn.execute('''
-        SELECT b.BookingID, g.FirstName, g.LastName, r.RoomNo, 
+        SELECT b.BookingID, g.FirstName, g.LastName, r.RoomNo,
                b.CheckInDate, b.CheckOutDate, b.Status
         FROM Booking b
         JOIN Guest g ON b.GuestID = g.GuestID
@@ -171,10 +226,9 @@ def book_room():
         room_id = request.form['room_id']
         check_in = request.form['check_in']
         check_out = request.form['check_out']
-        status = 'Pending'
 
         try:
-            guest = conn.execute('SELECT GuestID FROM Guest WHERE UserID = ?', 
+            guest = conn.execute('SELECT GuestID FROM Guest WHERE UserID = ?',
                                  (session['user_id'],)).fetchone()
             if not guest:
                 flash('Guest profile not found.', 'error')
@@ -182,8 +236,8 @@ def book_room():
 
             conn.execute('''
                 INSERT INTO Booking (GuestID, RoomID, CheckInDate, CheckOutDate, Status)
-                VALUES (?, ?, ?, ?, ?)
-            ''', (guest['GuestID'], room_id, check_in, check_out, status))
+                VALUES (?, ?, ?, ?, 'Pending')
+            ''', (guest['GuestID'], room_id, check_in, check_out))
             conn.execute("UPDATE Room SET IsAvailable = '0' WHERE RoomID = ?", (room_id,))
             conn.commit()
             flash('Booking confirmed!', 'success')
@@ -263,62 +317,261 @@ def guests():
     conn.close()
     return render_template('guests.html', guests=all_guests)
 
-if __name__ == '__main__':
-    init_db()
-    app.run(debug=True) 
-
-
-@app.route('/bookings')
-def bookings():
-    if 'user_id' not in session:
+@app.route('/payments')
+def payments():
+    if 'user_id' not in session or session['role'] != 'Owner':
         return redirect(url_for('login'))
-    
- 
     conn = get_db()
-    
-   
-    all_bookings = conn.execute('SELECT * FROM Booking').fetchall()
-   
+    all_payments = conn.execute('''
+        SELECT p.PaymentID, g.FirstName, g.LastName, r.RoomNo,
+               p.Amount, p.PayMethod, p.Status, p.PaymentDate,
+               p.LateFeeApplied, p.LateFeeAmount
+        FROM Payment p
+        JOIN Guest g ON p.GuestID = g.GuestID
+        JOIN Room r ON p.RoomID = r.RoomID
+        ORDER BY p.PaymentDate DESC
+    ''').fetchall()
     conn.close()
-    
+    return render_template('payments.html', payments=all_payments)
 
-    return render_template('bookings.html', bookings=all_bookings) 
-
-
-@app.route('/book_room', methods=['GET', 'POST'])
-def book_room():
-    if 'user_id' not in session:
+@app.route('/add_payment', methods=['GET', 'POST'])
+def add_payment():
+    if 'user_id' not in session or session['role'] != 'Owner':
         return redirect(url_for('login'))
-
     conn = get_db()
-
     if request.method == 'POST':
-        room_id = request.form['room_id']
-        check_in = request.form['check_in']
-        check_out = request.form['check_out']
-        status = 'Pending' 
-        
-     
+        guest_id = request.form['GuestID']
+        booking_id = request.form['BookingID']
+        room_id = request.form['RoomID']
+        amount = request.form['Amount']
+        pay_method = request.form['PayMethod']
+        status = request.form['Status']
+        late_fee = request.form.get('LateFeeAmount', 0) or 0
+        late_fee_applied = 1 if float(late_fee) > 0 else 0
         try:
             conn.execute('''
-                INSERT INTO Booking (GuestID, RoomID, CheckInDate, CheckOutDate, Status)
-                VALUES (?, ?, ?, ?, ?)
-            ''', (session['user_id'], room_id, check_in, check_out, status))
-            
-        
-            conn.execute("UPDATE Room SET IsAvailable = '0' WHERE RoomID = ?", (room_id,))
-            
+                INSERT INTO Payment (GuestID, RoomID, BookingID, Amount, PayMethod, Status, LateFeeApplied, LateFeeAmount)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (guest_id, room_id, booking_id, amount, pay_method, status, late_fee_applied, late_fee))
             conn.commit()
+            flash('Payment recorded successfully!', 'success')
         except Exception as e:
-            print(f"Booking Error: {e}")
+            flash('Error recording payment.', 'error')
+            print(e)
         finally:
             conn.close()
-        
+        return redirect(url_for('payments'))
+
+    bookings = conn.execute('''
+        SELECT b.BookingID, g.FirstName, g.LastName, r.RoomNo, r.RoomID, g.GuestID
+        FROM Booking b
+        JOIN Guest g ON b.GuestID = g.GuestID
+        JOIN Room r ON b.RoomID = r.RoomID
+    ''').fetchall()
+    conn.close()
+    return render_template('add_payment.html', bookings=bookings)
+
+@app.route('/announcements')
+def announcements():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    conn = get_db()
+    all_announcements = conn.execute('''
+        SELECT * FROM Announcement ORDER BY AnnouncementDate DESC
+    ''').fetchall()
+    conn.close()
+    return render_template('announcements.html', announcements=all_announcements)
+
+@app.route('/add_announcement', methods=['GET', 'POST'])
+def add_announcement():
+    if 'user_id' not in session or session['role'] != 'Owner':
+        return redirect(url_for('login'))
+    if request.method == 'POST':
+        title = request.form['Title']
+        announcement_type = request.form['AnnouncementType']
+        description = request.form['Description']
+        conn = get_db()
+        try:
+            conn.execute('''
+                INSERT INTO Announcement (Title, AnnouncementType, AnnouncementDate, Description)
+                VALUES (?, ?, CURRENT_TIMESTAMP, ?)
+            ''', (title, announcement_type, description))
+            conn.commit()
+            flash('Announcement posted!', 'success')
+        except Exception as e:
+            flash('Error posting announcement.', 'error')
+            print(e)
+        finally:
+            conn.close()
+        return redirect(url_for('announcements'))
+    return render_template('add_announcement.html')
+
+@app.route('/delete_announcement/<int:announcement_id>')
+def delete_announcement(announcement_id):
+    if 'user_id' not in session or session['role'] != 'Owner':
+        return redirect(url_for('login'))
+    conn = get_db()
+    conn.execute('DELETE FROM Announcement WHERE AnnouncementID = ?', (announcement_id,))
+    conn.commit()
+    conn.close()
+    flash('Announcement deleted.', 'success')
+    return redirect(url_for('announcements'))
+
+@app.route('/meal_plans')
+def meal_plans():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    conn = get_db()
+    plans = conn.execute('SELECT * FROM MealPlan').fetchall()
+    guest = conn.execute('SELECT GuestID FROM Guest WHERE UserID = ?',
+                         (session['user_id'],)).fetchone()
+    subscription = None
+    if guest:
+        subscription = conn.execute('''
+            SELECT ms.*, mp.PlanName FROM MealSubscription ms
+            JOIN MealPlan mp ON ms.PlanID = mp.PlanID
+            WHERE ms.GuestID = ? AND ms.Status = 'Active'
+        ''', (guest['GuestID'],)).fetchone()
+    conn.close()
+    return render_template('meal_plans.html', plans=plans,
+                           subscription=subscription)
+
+@app.route('/subscribe_meal/<int:plan_id>')
+def subscribe_meal(plan_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    conn = get_db()
+    try:
+        guest = conn.execute('SELECT GuestID FROM Guest WHERE UserID = ?',
+                             (session['user_id'],)).fetchone()
+        if guest:
+            conn.execute("UPDATE MealSubscription SET Status = 'Inactive' WHERE GuestID = ?",
+                         (guest['GuestID'],))
+            conn.execute('''
+                INSERT INTO MealSubscription (GuestID, PlanID, StartDate, Status)
+                VALUES (?, ?, DATE('now'), 'Active')
+            ''', (guest['GuestID'], plan_id))
+            conn.commit()
+            flash('Meal plan subscribed!', 'success')
+    except Exception as e:
+        flash('Error subscribing to meal plan.', 'error')
+        print(e)
+    finally:
+        conn.close()
+    return redirect(url_for('meal_plans'))
+
+@app.route('/services')
+def services():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    conn = get_db()
+    all_services = conn.execute('SELECT * FROM Service').fetchall()
+    conn.close()
+    return render_template('services.html', services=all_services)
+
+@app.route('/request_service', methods=['GET', 'POST'])
+def request_service():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    conn = get_db()
+    if request.method == 'POST':
+        service_id = request.form['ServiceID']
+        details = request.form['RequestDetails']
+        try:
+            guest = conn.execute('SELECT GuestID FROM Guest WHERE UserID = ?',
+                                 (session['user_id'],)).fetchone()
+            booking = conn.execute('''
+                SELECT RoomID FROM Booking WHERE GuestID = ?
+                ORDER BY BookingID DESC LIMIT 1
+            ''', (guest['GuestID'],)).fetchone()
+            if not guest or not booking:
+                flash('You need an active booking to request services.', 'error')
+                return redirect(url_for('dashboard'))
+            conn.execute('''
+                INSERT INTO ServiceRequest (ServiceID, GuestID, RoomID, RequestDetails, RequestDate, Status)
+                VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP, 'Pending')
+            ''', (service_id, guest['GuestID'], booking['RoomID'], details))
+            conn.commit()
+            flash('Service request submitted!', 'success')
+        except Exception as e:
+            flash('Error submitting request.', 'error')
+            print(e)
+        finally:
+            conn.close()
         return redirect(url_for('dashboard'))
 
-   
-    selected_room = request.args.get('room_id')
-    rooms = conn.execute("SELECT * FROM Room WHERE IsAvailable = '1'").fetchall()
+    all_services = conn.execute('SELECT * FROM Service').fetchall()
     conn.close()
-    
-    return render_template('book_room.html', rooms=rooms, selected_room=selected_room)
+    return render_template('request_service.html', services=all_services)
+
+@app.route('/my_profile')
+def my_profile():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    conn = get_db()
+    guest = conn.execute('''
+        SELECT g.*, u.Email as UserEmail, u.Role
+        FROM Guest g
+        JOIN User u ON g.UserID = u.UserID
+        WHERE g.UserID = ?
+    ''', (session['user_id'],)).fetchone()
+    conn.close()
+    return render_template('my_profile.html', guest=guest)
+
+@app.route('/visitor_entry', methods=['GET', 'POST'])
+def visitor_entry():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    conn = get_db()
+    if request.method == 'POST':
+        visitor_name = request.form['VisitorName']
+        id_type = request.form['IDType']
+        id_number = request.form['NumberOfID']
+        purpose = request.form['VisitPurpose']
+        time_in = request.form['TimeIn']
+        time_out = request.form['TimeOut']
+        try:
+            guest = conn.execute('SELECT GuestID FROM Guest WHERE UserID = ?',
+                                 (session['user_id'],)).fetchone()
+            booking = conn.execute('''
+                SELECT RoomID FROM Booking WHERE GuestID = ?
+                ORDER BY BookingID DESC LIMIT 1
+            ''', (guest['GuestID'],)).fetchone()
+            if not guest or not booking:
+                flash('You need an active booking to log visitors.', 'error')
+                return redirect(url_for('dashboard'))
+            conn.execute('''
+                INSERT INTO Visitor (VisitorName, IDType, NumberOfID, VisitPurpose)
+                VALUES (?, ?, ?, ?)
+            ''', (visitor_name, id_type, id_number, purpose))
+            visitor_id = conn.execute('SELECT last_insert_rowid()').fetchone()[0]
+            conn.execute('''
+                INSERT INTO VisitorLog (VisitorID, GuestID, RoomID, TimeIn, TimeOut, GuestApprovalStatus)
+                VALUES (?, ?, ?, ?, ?, 'Approved')
+            ''', (visitor_id, guest['GuestID'], booking['RoomID'], time_in, time_out))
+            conn.commit()
+            flash('Visitor logged successfully!', 'success')
+        except Exception as e:
+            flash('Error logging visitor.', 'error')
+            print(e)
+        finally:
+            conn.close()
+        return redirect(url_for('dashboard'))
+
+    guest = conn.execute('SELECT GuestID FROM Guest WHERE UserID = ?',
+                         (session['user_id'],)).fetchone()
+    visitor_logs = []
+    if guest:
+        visitor_logs = conn.execute('''
+            SELECT v.VisitorName, v.VisitPurpose, vl.TimeIn, vl.TimeOut, vl.GuestApprovalStatus
+            FROM VisitorLog vl
+            JOIN Visitor v ON vl.VisitorID = v.VisitorID
+            WHERE vl.GuestID = ?
+            ORDER BY vl.TimeIn DESC
+        ''', (guest['GuestID'],)).fetchall()
+    conn.close()
+    return render_template('visitor_entry.html', visitor_logs=visitor_logs)
+
+if __name__ == '__main__':
+    init_db()
+    app.run(debug=True)
