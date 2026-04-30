@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Bookings | LuckyNest{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+
+    <div class="dashboard-banner">
+        <div>
+            <h1>Bookings 📋</h1>
+            <p>All current and past bookings</p>
+        </div>
+        <a href="{{ url_for('dashboard') }}" class="btn-logout">← Dashboard</a>
+    </div>
+
+    <div class="section-title">All Bookings</div>
+    <div class="table-container">
+        <table class="dash-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Guest</th>
+                    <th>Room</th>
+                    <th>Check In</th>
+                    <th>Check Out</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if bookings %}
+                    {% for booking in bookings %}
+                    <tr>
+                        <td>#{{ booking.BookingID }}</td>
+                        <td><strong style="color:#FFD500;">{{ booking.FirstName }} {{ booking.LastName }}</strong></td>
+                        <td>Room {{ booking.RoomNo }}</td>
+                        <td>{{ booking.CheckInDate }}</td>
+                        <td>{{ booking.CheckOutDate }}</td>
+                        <td><span class="status-badge">{{ booking.Status }}</span></td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align:center; color:#aaa; padding:30px;">
+                            No bookings yet
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}
